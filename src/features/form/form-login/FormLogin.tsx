@@ -1,29 +1,29 @@
-import { useNavigate } from "react-router-dom";
+"use client";
+
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useYupForm } from "../../../hook/useYupForm";
-import { loginSvcCaller } from "../../../services/auth/login/login.svc";
 import Typography from "../../../atoms/typography";
 import Input from "../../../atoms/input";
 import Button from "../../../atoms/button";
 import { schemaFormLogin } from "./schema";
 import ContainerAuthLottie from "../../../molecules/container-auth-lottie/ContainerAuthLottie";
-import { setTokenInCookie } from "../../../utils/app.utils";
-import { SSOCOOKIES } from "../../../constants/cookies.const";
 
 const FormLogin= ()=> {
-  const navigate = useNavigate();
-  const { register, handleSubmit, getError } = useYupForm({
+  const router = useRouter();
+  const { register, handleSubmit, getError, isSubmitting } = useYupForm({
     schema: schemaFormLogin,
     onSubmit: async (values) => {
       try {
-        const res = await loginSvcCaller.execute(values);
-        if (res?.accessToken) {
-          setTokenInCookie(SSOCOOKIES.ACCESS_TOKEN, res.accessToken);
-        }
-        if (res?.refreshToken) {
-          setTokenInCookie(SSOCOOKIES.REFRESH_TOKEN, res.refreshToken);
-        }
-        if (res?.accessToken) {
-          navigate("/dashboard");
+        const res = await signIn("credentials", {
+          email: values.email,
+          password: values.password,
+          redirect: false,
+        });
+
+        if (res?.ok) {
+          router.push("/dashboard");
+          router.refresh();
         }
       } catch (error) {
         console.error("Login Error: ", error)
@@ -38,11 +38,11 @@ const FormLogin= ()=> {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
         <Input 
-          {...register("username")} 
-          placeholder="Username" 
-          helperText={getError("username")} 
+          {...register("email")} 
+          placeholder="you@example.com" 
+          helperText={getError("email")} 
           state={
-            getError("username") ? "error" : "default"
+            getError("email") ? "error" : "default"
           }
         />
         
@@ -57,11 +57,11 @@ const FormLogin= ()=> {
         />
 
         <div className="flex gap-2">
-          <Button type="submit" className="text-white w-full" variant="primary">
-            Sign in
+          <Button type="submit" className="text-white w-full" variant="primary" disabled={isSubmitting}>
+            {isSubmitting ? "Signing in..." : "Sign in"}
           </Button>
 
-          <Button className="text-black w-full" color="warning" onClick={() => navigate("/register")}>
+          <Button type="button" className="text-black w-full" color="warning" disabled={isSubmitting} onClick={() => router.push("/register")}>
             Sign up
           </Button>
         </div>

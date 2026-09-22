@@ -1,0 +1,23 @@
+@use '../style/base/reset';
+@use '../style/base/global';
+@use '../style/themes/themes';
+@use '../style/abstracts/colors';
+@use '../style/abstracts/spacing';
+@use '../style/abstracts/typography';
+
+@use '../style/components/atoms/button';
+@use '../style/components/atoms/input';
+@use '../style/components/atoms/select';
+@use '../style/components/atoms/badge';
+@use '../style/components/atoms/base-card';
+@use '../style/components/atoms/file-upload';
+@use '../style/components/atoms/box';
+@use '../style/components/atoms/avatar';
+@use '../style/components/atoms/base-modal';
+@use '../style/components/atoms/toast';
+
+@use '../style/components/molecules/card-post';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

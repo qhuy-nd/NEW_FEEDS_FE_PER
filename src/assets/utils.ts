@@ -1,5 +1,5 @@
 export const getAssets = (path: string) => {
-  return new URL(path, import.meta.url).href
+  return path
 }
 
 
@@ -13,5 +13,5 @@ export async function loadJsonAsset<T = unknown>(path: string): Promise<T> {
 }
 
 export const getLottieUrl = (fileName: string) => {
-  return new URL(`./jsons/${fileName}.json`, import.meta.url).href;
+  return `/lottie/${fileName}.json`;
 }

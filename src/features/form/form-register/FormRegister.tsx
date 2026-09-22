@@ -1,4 +1,6 @@
-import { useNavigate } from "react-router-dom";
+"use client";
+
+import { useRouter } from "next/navigation";
 import { useYupForm } from "../../../hook/useYupForm";
 import { registerSvcCaller } from "../../../services/auth/register/register.svc";
 import Typography from "../../../atoms/typography";
@@ -6,23 +8,20 @@ import Input from "../../../atoms/input";
 import Button from "../../../atoms/button";
 import { schemaFormRegister } from "./schema";
 import ContainerAuthLottie from "../../../molecules/container-auth-lottie/ContainerAuthLottie";
-import { setTokenInCookie } from "../../../utils/app.utils";
-import { SSOCOOKIES } from "../../../constants/cookies.const";
+import { useAuth } from "../../../context/auth/useAuth";
 
 const FormRegister = () => {
-  const navigate = useNavigate();
-  const { register, handleSubmit, getError } = useYupForm({
+  const router = useRouter();
+  const { login } = useAuth();
+  const { register, handleSubmit, getError, isSubmitting } = useYupForm({
     schema: schemaFormRegister,
     onSubmit: async (values) => {
       try {
         const res = await registerSvcCaller.execute(values);
         if (res?.accessToken) {
-          setTokenInCookie(SSOCOOKIES.ACCESS_TOKEN, res.accessToken);
+          await login(res);
+          router.push("/dashboard");
         }
-        if (res?.refreshToken) {
-          setTokenInCookie(SSOCOOKIES.REFRESH_TOKEN, res.refreshToken);
-        }
-        navigate("/dashboard");
       } catch (error) {
         console.error("Register Error: ", error);
       }
@@ -78,10 +77,10 @@ const FormRegister = () => {
         } />
 
         <div className="flex flex-col gap-2">
-          <Button type="submit" className="text-white w-full" variant="primary">
-            Register
+          <Button type="submit" className="text-white w-full" variant="primary" disabled={isSubmitting}>
+            {isSubmitting ? "Registering..." : "Register"}
           </Button>
-          <Button className="text-black w-full" color="default" onClick={() => navigate("/")}>
+          <Button type="button" className="text-black w-full" color="default" disabled={isSubmitting} onClick={() => router.push("/")}>
             Back to Login
           </Button>
         </div>

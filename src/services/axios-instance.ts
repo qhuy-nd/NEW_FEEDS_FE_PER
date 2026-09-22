@@ -1,15 +1,14 @@
 import axios, { type AxiosRequestConfig } from 'axios'
 import qs from 'qs'
-import { deleteTokenFromCookie, getAccessTokenFromCookie, setTokenInCookie } from '../utils/app.utils'
-import { SSOCOOKIES } from '../constants/cookies.const'
 import { API_AUTH_ROUTERS } from './auth/router'
 import type { IRefreshTokenData, IResponseRefreshToken } from './auth/refresh-token/refresh-token.type'
+import { clearAuthTokens, getStoredAuthTokens, saveAuthTokens } from './auth/token'
 
 type RetryableRequestConfig = AxiosRequestConfig & {
   _retry?: boolean;
 }
 
-const baseURL = import.meta.env.VITE_BASE_URL_API || ''
+const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || ''
 
 const axiosInstance = axios.create({
   baseURL,
@@ -39,7 +38,7 @@ const parseRefreshTokenResponse = (raw: IResponseRefreshToken): IRefreshTokenDat
 const refreshAccessToken = (refreshToken: string) => {
   if (!refreshTokenPromise) {
     refreshTokenPromise = refreshAxiosInstance
-      .post<IResponseRefreshToken>(API_AUTH_ROUTERS.POST.REFRESH_TOKEN, { refreshToken })
+      .post<IResponseRefreshToken>(API_AUTH_ROUTERS.POST.REFRESH_TOKEN, { refresh_token: refreshToken })
       .then((response) => {
         const parsed = parseRefreshTokenResponse(response.data)
 
@@ -59,7 +58,7 @@ const refreshAccessToken = (refreshToken: string) => {
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = getAccessTokenFromCookie(SSOCOOKIES.ACCESS_TOKEN)
+    const token = getStoredAuthTokens()?.accessToken
 
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
@@ -76,13 +75,13 @@ axiosInstance.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config as RetryableRequestConfig | undefined
-    const authRoutes = Object.values(API_AUTH_ROUTERS.POST)
+    const authRoutes = Object.values(API_AUTH_ROUTERS).flatMap((routes) => Object.values(routes))
     const isAuthRequest = authRoutes.some((route) => originalRequest?.url?.includes(route))
 
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !isAuthRequest) {
       originalRequest._retry = true
 
-      const refreshToken = getAccessTokenFromCookie(SSOCOOKIES.REFRESH_TOKEN)
+      const refreshToken = getStoredAuthTokens()?.refreshToken
 
       try {
         if (!refreshToken) throw new Error('No refresh token available')
@@ -90,19 +89,17 @@ axiosInstance.interceptors.response.use(
         const res = await refreshAccessToken(refreshToken)
 
         if (res.accessToken) {
-          setTokenInCookie(SSOCOOKIES.ACCESS_TOKEN, res.accessToken)
+          saveAuthTokens({
+            accessToken: res.accessToken,
+            refreshToken: res.refreshToken || refreshToken,
+          })
           originalRequest.headers = originalRequest.headers ?? {}
           originalRequest.headers.Authorization = `Bearer ${res.accessToken}`
         }
 
-        if (res.refreshToken) {
-          setTokenInCookie(SSOCOOKIES.REFRESH_TOKEN, res.refreshToken)
-        }
-
         return axiosInstance(originalRequest)
       } catch (refreshError) {
-        deleteTokenFromCookie(SSOCOOKIES.ACCESS_TOKEN)
-        deleteTokenFromCookie(SSOCOOKIES.REFRESH_TOKEN)
+        clearAuthTokens()
         return Promise.reject(refreshError)
       }
     }

@@ -1,6 +1,13 @@
 export interface IRequestLogin {
-  username: string;
+  email: string;
   password: string;
+}
+
+export interface IResponseCredentialsCallback {
+  url?: string;
+  error?: string;
+  ok?: boolean;
+  status?: number;
 }
 
 export interface IResponseLogin {

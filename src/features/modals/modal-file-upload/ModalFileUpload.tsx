@@ -8,8 +8,7 @@ import { EStatusPost } from "../../../services/posts/type";
 import { createPostCaller } from "../../../services/posts/create-post/create-post.svc";
 import { useYupForm } from "../../../hook/useYupForm";
 import { schemaCreatePost } from "./schema";
-import { useApiResult } from "../../../hook/api/useApiResult";
-import { meSvcCaller } from "../../../services/auth/me/me.svc";
+import { useAuth } from "../../../context/auth/useAuth";
 
 export interface ModalFileUploadProps {
   open?: boolean;
@@ -27,11 +26,10 @@ const ModalFileUpload: React.FC<ModalFileUploadProps> = ({
   trigger,
 }) => {
   const [internalOpen, setInternalOpen] = useState(false);
+  const { user } = useAuth();
 
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
-
-  const { data: userData } = useApiResult(meSvcCaller);
   
   const { register, handleSubmit, getError, setValue, isSubmitting, reset } = useYupForm({
     schema: schemaCreatePost,
@@ -43,7 +41,7 @@ const ModalFileUpload: React.FC<ModalFileUploadProps> = ({
     onSubmit: async (values) => {
       try {
         await createPostCaller.execute({
-          user_id: userData?.id ?? '',
+          user_id: user?.id ?? '',
           ...values,
         });
         onSuccess?.();

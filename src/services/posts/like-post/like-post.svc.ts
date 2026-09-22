@@ -8,7 +8,7 @@ class LikePostSvcCaller extends RxAxiosCaller<
   ILikePostResponse
 > {
   constructor() {
-    super(API_POST_ROUTERS.POST.LIKE.replace("{id}", "id"), "POST", (raw) => raw.data)
+    super(API_POST_ROUTERS.POST.LIKE, "POST", (raw) => raw.data)
   }
 }
 

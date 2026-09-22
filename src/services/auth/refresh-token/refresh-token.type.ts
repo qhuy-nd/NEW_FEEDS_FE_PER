@@ -1,5 +1,6 @@
 export interface IRequestRefreshToken {
-  refreshToken: string;
+  refresh_token: string;
+  refreshToken?: string;
 }
 
 export interface IRefreshTokenData {

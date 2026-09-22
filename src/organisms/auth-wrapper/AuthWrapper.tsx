@@ -1,25 +1,10 @@
-import React, { useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { getAccessTokenFromCookie } from "../../utils/app.utils";
-import { SSOCOOKIES } from "../../constants/cookies.const";
-import { useApiResult } from "../../hook/api/useApiResult";
-import { meSvcCaller } from "../../services/auth/me/me.svc";
+import { useAuth } from "../../context/auth/useAuth";
 
-const AuthWrapper: React.FC = () => {
-  const token = getAccessTokenFromCookie(SSOCOOKIES.ACCESS_TOKEN);
-  const { isLoading, isSuccess, isIdle } = useApiResult(meSvcCaller);
+const AuthWrapper = () => {
+  const { isChecking, isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    if (token && isIdle) {
-      meSvcCaller.execute({});
-    }
-  }, [token, isIdle]);
-
-  if (!token) {
-    return <Navigate to="/" replace />;
-  }
-
-  if (isLoading || isIdle) {
+  if (isChecking) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2"></div>
@@ -27,7 +12,7 @@ const AuthWrapper: React.FC = () => {
     );
   }
 
-  if (!isSuccess) {
+  if (!isAuthenticated) {
     return <Navigate to="/" replace />;
   }
 

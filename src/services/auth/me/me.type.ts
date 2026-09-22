@@ -5,4 +5,3 @@ export type IMeResponse = {
 } 
 
 export type IMeRequest = object
-

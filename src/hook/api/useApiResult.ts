@@ -1,17 +1,28 @@
-import { useState, useEffect, useMemo } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import type { RxAxiosCaller } from "../../services/api.svc";
-import type { TApiResult } from "../../services/type";
 
 export function useApiResult<TData, TVariables = undefined, TRawResponse = unknown>(
   api: RxAxiosCaller<TData, TVariables, TRawResponse>
 ) {
-  const [result, setResult] = useState<TApiResult<TData>>(() => api.getResult());
+  const result = useSyncExternalStore(
+    (onStoreChange) => {
+      let isFirstEmit = true;
 
-  useEffect(() => {
-    const sub = api.result$.subscribe(setResult);
-    return () => sub.unsubscribe();
-  }, [api]);
+      const sub = api.result$.subscribe(() => {
+        if (isFirstEmit) {
+          isFirstEmit = false;
+          return;
+        }
 
+        onStoreChange();
+      });
+
+      return () => sub.unsubscribe();
+    },
+    () => api.getResult(),
+    () => api.getResult(),
+  );
+  
   return useMemo(() => ({
     status: result.status,
     data: result.status === "success" ? result.data : null,
