@@ -1,0 +1,15 @@
+@layer components {
+  .community-composer {
+    display: flex;
+    align-items: center;
+    gap: theme('spacing.md');
+    padding: theme('spacing.md') theme('spacing.lg');
+    background: rgb(var(--white));
+    border-radius: 20px;
+  }
+
+  .community-composer__placeholder {
+    flex: 1;
+    color: var(--color-text-secondary);
+  }
+}

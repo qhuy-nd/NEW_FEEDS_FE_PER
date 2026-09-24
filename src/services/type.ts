@@ -1,3 +1,6 @@
+import type { AxiosInstance, AxiosRequestConfig } from 'axios'
+import type { ToastOptions } from '../atoms/toast/type'
+
 export type TApiState<T> =
   | { status: 'idle' }
   | { status: 'loading' }
@@ -11,6 +14,32 @@ export type TApiDefaultRes = {
 }
 
 export type THttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+
+export type TApiToastEventConfig =
+  | boolean
+  | string
+  | (Omit<ToastOptions, 'variant'> & { message?: string })
+
+export type TApiToastConfig =
+  | boolean
+  | 'fail'
+  | 'success'
+  | 'all'
+  | {
+      success?: TApiToastEventConfig
+      fail?: TApiToastEventConfig
+    }
+
+export type TApiToastEvent = 'success' | 'fail'
+
+export type TApiRequestConfig = AxiosRequestConfig & {
+  toast?: TApiToastConfig
+}
+
+export type TApiCallerConfig = {
+  toast?: TApiToastConfig
+  instance?: AxiosInstance
+}
 
 /**
  * Extract the return type of the execute method from an API caller
@@ -29,5 +58,5 @@ export type TApiMethod<T> = T extends {
   : never
 
 export type TApiResult<TVal = unknown> = TApiDefaultRes & {
-  data?: DeepPartial<TVal>
+  data?: TVal
 }

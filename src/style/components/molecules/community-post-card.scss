@@ -1,0 +1,113 @@
+@layer components {
+  .community-post-card {
+    background: rgb(var(--white));
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .community-post-card .base-card {
+    border: 0;
+    background: transparent;
+  }
+
+  .community-post-card__eyebrow {
+    display: block;
+    color: var(--color-text-secondary);
+    letter-spacing: 0;
+  }
+
+  .community-post-card__header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: theme('spacing.sm');
+  }
+
+  .community-post-card__author {
+    min-width: 0;
+  }
+
+  .community-post-card__author-name,
+  .community-post-card__meta {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .community-post-card__meta {
+    color: var(--color-text-secondary);
+  }
+
+  .community-post-card__dot-meta::before {
+    content: "";
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    margin-right: theme('spacing.xs');
+    border-radius: 999px;
+    background: rgb(var(--color-muted));
+  }
+
+  .community-post-card__image {
+    display: block;
+    width: min(100%, 620px);
+    max-height: 420px;
+    margin-inline: auto;
+    object-fit: cover;
+    border-radius: 18px;
+  }
+
+  .community-post-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: theme('spacing.xs');
+  }
+
+  .community-post-card__title {
+    margin: 0;
+    border: 0;
+    padding: 0;
+    font-size: theme('fontSize.xl');
+    line-height: 1.2;
+    letter-spacing: 0;
+  }
+
+  .community-post-card__content {
+    margin: 0;
+    color: var(--color-text-primary);
+  }
+
+  .community-post-card__counters {
+    display: flex;
+    align-items: center;
+    gap: theme('spacing.md');
+    color: var(--color-text-secondary);
+  }
+
+  .community-post-card__counters span {
+    display: inline-flex;
+    align-items: center;
+    gap: theme('spacing.2xs');
+  }
+
+  .community-post-card__counters span:last-child {
+    margin-left: auto;
+  }
+
+  .community-post-card__actions {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: theme('spacing.xs');
+    padding: theme('spacing.sm') 0;
+  }
+
+  .community-post-card__actions .btn {
+    gap: theme('spacing.xs');
+    border: 0;
+    background: transparent;
+    color: var(--color-text-secondary);
+  }
+}

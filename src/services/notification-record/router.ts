@@ -1,0 +1,11 @@
+const PREFIX_NOTIFICATION_RECORD = "/notification_record";
+
+export const API_NOTIFICATION_RECORD_ROUTERS = {
+  GET: {
+    NOTIFICATION_RECORD_GET: `${PREFIX_NOTIFICATION_RECORD}/action/get/{slug}`,
+    NOTIFICATION_RECORD_GETLIST: `${PREFIX_NOTIFICATION_RECORD}/action/getlist`,
+  },
+  PUT: {
+    NOTIFICATION_RECORD_UPDATE_ONE: `${PREFIX_NOTIFICATION_RECORD}/action/update/{id}`,
+  },
+};

@@ -1,0 +1,18 @@
+const PREFIX_TWEET_SOCIAL_VOTES = "/tweet_social_votes";
+
+export const API_TWEET_SOCIAL_VOTES_ROUTERS = {
+  GET: {
+    TWEET_SOCIAL_VOTES_GET: `${PREFIX_TWEET_SOCIAL_VOTES}/action/get/{slug}`,
+    TWEET_SOCIAL_VOTES_GETLIST: `${PREFIX_TWEET_SOCIAL_VOTES}/action/getlist`,
+  },
+  POST: {
+    TWEET_SOCIAL_VOTES_CREATE_ONE: `${PREFIX_TWEET_SOCIAL_VOTES}/action/create`,
+    TWEET_SOCIAL_VOTES_VOTE: `${PREFIX_TWEET_SOCIAL_VOTES}/action/vote`,
+  },
+  PUT: {
+    TWEET_SOCIAL_VOTES_UPDATE_ONE: `${PREFIX_TWEET_SOCIAL_VOTES}/action/update/{id}`,
+  },
+  DELETE: {
+    TWEET_SOCIAL_VOTES_DELETE_ONE: `${PREFIX_TWEET_SOCIAL_VOTES}/action/delete/{id}`,
+  },
+};

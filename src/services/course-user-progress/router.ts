@@ -1,0 +1,8 @@
+const PREFIX_COURSE_USER_PROGRESS = "/course_user_progress";
+
+export const API_COURSE_USER_PROGRESS_ROUTERS = {
+  GET: {
+    COURSE_USER_PROGRESS_GET: `${PREFIX_COURSE_USER_PROGRESS}/action/get/{slug}`,
+    COURSE_USER_PROGRESS_GETLIST: `${PREFIX_COURSE_USER_PROGRESS}/action/getlist`,
+  },
+};

@@ -30,7 +30,11 @@ type TAuthUser = User & {
   refreshToken?: string;
 }
 
-const backendBaseUrl = process.env.AUTH_BACKEND_URL ?? "https://mangox-test.mangoads.com.vn/api/v1";
+const backendBaseUrl =
+  process.env.AUTH_BACKEND_URL ??
+  process.env.NEXT_PUBLIC_API_BASE_URL ??
+  process.env.NEXT_PUBLIC_AUTH_BACKEND_URL ??
+  "https://mangox.mangoads.com.vn/api/v1";
 
 const getAuthData = (raw: TBackendAuthResponse): TBackendAuthData => {
   return {

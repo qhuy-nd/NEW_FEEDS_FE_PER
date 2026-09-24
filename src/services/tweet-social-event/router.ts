@@ -1,0 +1,18 @@
+const PREFIX_TWEET_SOCIAL_EVENT = "/tweet_social_event";
+
+export const API_TWEET_SOCIAL_EVENT_ROUTERS = {
+  GET: {
+    TWEET_SOCIAL_EVENT_GET: `${PREFIX_TWEET_SOCIAL_EVENT}/action/get/{slug}`,
+    TWEET_SOCIAL_EVENT_GETLIST: `${PREFIX_TWEET_SOCIAL_EVENT}/action/getlist`,
+  },
+  POST: {
+    TWEET_SOCIAL_EVENT_CREATE_ONE: `${PREFIX_TWEET_SOCIAL_EVENT}/action/create`,
+    TWEET_SOCIAL_EVENT_REGISTER: `${PREFIX_TWEET_SOCIAL_EVENT}/action/register`,
+  },
+  PUT: {
+    TWEET_SOCIAL_EVENT_UPDATE_ONE: `${PREFIX_TWEET_SOCIAL_EVENT}/action/update/{id}`,
+  },
+  DELETE: {
+    TWEET_SOCIAL_EVENT_DELETE_ONE: `${PREFIX_TWEET_SOCIAL_EVENT}/action/delete/{id}`,
+  },
+};

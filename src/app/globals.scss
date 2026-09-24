@@ -17,6 +17,13 @@
 @use '../style/components/atoms/toast';
 
 @use '../style/components/molecules/card-post';
+@use '../style/components/molecules/community-topbar';
+@use '../style/components/molecules/community-sidebar';
+@use '../style/components/molecules/community-composer';
+@use '../style/components/molecules/community-post-card';
+@use '../style/components/molecules/community-right-rail';
+
+@use '../style/components/features/community-feed';
 
 @tailwind base;
 @tailwind components;

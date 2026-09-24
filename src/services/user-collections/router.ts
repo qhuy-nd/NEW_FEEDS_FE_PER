@@ -1,0 +1,17 @@
+const PREFIX_USER_COLLECTIONS = "/user_collections";
+
+export const API_USER_COLLECTIONS_ROUTERS = {
+  GET: {
+    USER_COLLECTIONS_GET: `${PREFIX_USER_COLLECTIONS}/action/get/{slug}`,
+    USER_COLLECTIONS_GETLIST: `${PREFIX_USER_COLLECTIONS}/action/getlist`,
+  },
+  POST: {
+    USER_COLLECTIONS_CREATE_ONE: `${PREFIX_USER_COLLECTIONS}/action/create`,
+  },
+  PUT: {
+    USER_COLLECTIONS_UPDATE_ONE: `${PREFIX_USER_COLLECTIONS}/action/update/{id}`,
+  },
+  DELETE: {
+    USER_COLLECTIONS_DELETE_ONE: `${PREFIX_USER_COLLECTIONS}/action/delete/{id}`,
+  },
+};

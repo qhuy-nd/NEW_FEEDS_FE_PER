@@ -1,0 +1,17 @@
+const PREFIX_COURSE_CONTENT_ITEM = "/course_content_item";
+
+export const API_COURSE_CONTENT_ITEM_ROUTERS = {
+  GET: {
+    COURSE_CONTENT_ITEM_GET: `${PREFIX_COURSE_CONTENT_ITEM}/action/get/{slug}`,
+    COURSE_CONTENT_ITEM_GETLIST: `${PREFIX_COURSE_CONTENT_ITEM}/action/getlist`,
+  },
+  POST: {
+    COURSE_CONTENT_ITEM_CREATE_ONE: `${PREFIX_COURSE_CONTENT_ITEM}/action/create`,
+  },
+  PUT: {
+    COURSE_CONTENT_ITEM_UPDATE_ONE: `${PREFIX_COURSE_CONTENT_ITEM}/action/update/{id}`,
+  },
+  DELETE: {
+    COURSE_CONTENT_ITEM_DELETE_ONE: `${PREFIX_COURSE_CONTENT_ITEM}/action/delete/{id}`,
+  },
+};

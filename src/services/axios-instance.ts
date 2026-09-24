@@ -1,4 +1,5 @@
 import axios, { type AxiosRequestConfig } from 'axios'
+import { getSession } from 'next-auth/react'
 import qs from 'qs'
 import { API_AUTH_ROUTERS } from './auth/router'
 import type { IRefreshTokenData, IResponseRefreshToken } from './auth/refresh-token/refresh-token.type'
@@ -8,10 +9,13 @@ type RetryableRequestConfig = AxiosRequestConfig & {
   _retry?: boolean;
 }
 
-const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || ''
+const externalBackendBaseURL = process.env.NEXT_PUBLIC_API_BASE_URL || ''
+const clientBackendBaseURL = process.env.NEXT_PUBLIC_API_CLIENT_BASE_URL || '/api/backend'
+const backendBaseURL = typeof window === 'undefined' ? externalBackendBaseURL : clientBackendBaseURL
+const nextAuthBaseURL = '/api'
 
 const axiosInstance = axios.create({
-  baseURL,
+  baseURL: backendBaseURL,
   withCredentials: true,
   paramsSerializer: (params) => {
     return qs.stringify(params)
@@ -19,12 +23,22 @@ const axiosInstance = axios.create({
 })
 
 const refreshAxiosInstance = axios.create({
-  baseURL,
+  baseURL: backendBaseURL,
   withCredentials: true,
 })
 
+export const nextAuthAxiosInstance = axios.create({
+  baseURL: nextAuthBaseURL,
+  withCredentials: true,
+  paramsSerializer: (params) => {
+    return qs.stringify(params)
+  },
+})
+
 axiosInstance.defaults.headers['Accept'] = 'application/json'
+axiosInstance.defaults.headers['X-Tenant-Id'] = process.env.NEXT_PUBLIC_TENANT_ID || ''
 refreshAxiosInstance.defaults.headers['Accept'] = 'application/json'
+nextAuthAxiosInstance.defaults.headers['Accept'] = 'application/json'
 
 let refreshTokenPromise: Promise<IRefreshTokenData> | null = null
 
@@ -56,9 +70,30 @@ const refreshAccessToken = (refreshToken: string) => {
   return refreshTokenPromise
 }
 
+const getSessionAuthTokens = async () => {
+  if (typeof window === 'undefined') return null
+
+  const session = await getSession()
+  const accessToken = session?.accessToken ?? session?.user?.accessToken
+  const refreshToken = session?.refreshToken ?? session?.user?.refreshToken
+
+  if (!accessToken) return null
+
+  return {
+    accessToken,
+    refreshToken,
+  }
+}
+
 axiosInstance.interceptors.request.use(
-  (config) => {
-    const token = getStoredAuthTokens()?.accessToken
+  async (config) => {
+    const storedTokens = getStoredAuthTokens()
+    const sessionTokens = storedTokens ? null : await getSessionAuthTokens()
+    const token = storedTokens?.accessToken ?? sessionTokens?.accessToken
+
+    if (sessionTokens) {
+      saveAuthTokens(sessionTokens)
+    }
 
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`

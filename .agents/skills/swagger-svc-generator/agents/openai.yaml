@@ -1,0 +1,3 @@
+interface:
+  display_name: "Swagger Svc Generator"
+  short_description: "Generate src/services API callers from OpenAPI JSON"

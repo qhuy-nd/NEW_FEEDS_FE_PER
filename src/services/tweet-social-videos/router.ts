@@ -1,0 +1,17 @@
+const PREFIX_TWEET_SOCIAL_VIDEOS = "/tweet_social_videos";
+
+export const API_TWEET_SOCIAL_VIDEOS_ROUTERS = {
+  GET: {
+    TWEET_SOCIAL_VIDEOS_GET: `${PREFIX_TWEET_SOCIAL_VIDEOS}/action/get/{slug}`,
+    TWEET_SOCIAL_VIDEOS_GETLIST: `${PREFIX_TWEET_SOCIAL_VIDEOS}/action/getlist`,
+  },
+  POST: {
+    TWEET_SOCIAL_VIDEOS_CREATE_ONE: `${PREFIX_TWEET_SOCIAL_VIDEOS}/action/create`,
+  },
+  PUT: {
+    TWEET_SOCIAL_VIDEOS_UPDATE_ONE: `${PREFIX_TWEET_SOCIAL_VIDEOS}/action/update/{id}`,
+  },
+  DELETE: {
+    TWEET_SOCIAL_VIDEOS_DELETE_ONE: `${PREFIX_TWEET_SOCIAL_VIDEOS}/action/delete/{id}`,
+  },
+};

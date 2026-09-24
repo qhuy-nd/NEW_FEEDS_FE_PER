@@ -1,0 +1,17 @@
+const PREFIX_TWEET_SOCIAL_IMAGE = "/tweet_social_image";
+
+export const API_TWEET_SOCIAL_IMAGE_ROUTERS = {
+  GET: {
+    TWEET_SOCIAL_IMAGE_GET: `${PREFIX_TWEET_SOCIAL_IMAGE}/action/get/{slug}`,
+    TWEET_SOCIAL_IMAGE_GETLIST: `${PREFIX_TWEET_SOCIAL_IMAGE}/action/getlist`,
+  },
+  POST: {
+    TWEET_SOCIAL_IMAGE_CREATE_ONE: `${PREFIX_TWEET_SOCIAL_IMAGE}/action/create`,
+  },
+  PUT: {
+    TWEET_SOCIAL_IMAGE_UPDATE_ONE: `${PREFIX_TWEET_SOCIAL_IMAGE}/action/update/{id}`,
+  },
+  DELETE: {
+    TWEET_SOCIAL_IMAGE_DELETE_ONE: `${PREFIX_TWEET_SOCIAL_IMAGE}/action/delete/{id}`,
+  },
+};

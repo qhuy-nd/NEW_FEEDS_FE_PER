@@ -1,8 +1,9 @@
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
-import { useCallback, useMemo, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, type ReactNode } from "react";
 import type { IMeResponse } from "../../services/auth/me/me.type";
+import { clearAuthTokens, saveAuthTokens } from "../../services/auth/token";
 import { AuthContext, type TAuthContext, type TAuthStatus } from "./auth.context";
 
 const getProfileFromSession = (session: ReturnType<typeof useSession>["data"]): IMeResponse | null => {
@@ -19,6 +20,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { data: session, status: sessionStatus, update } = useSession();
   const profile = getProfileFromSession(session);
 
+  useEffect(() => {
+    if (sessionStatus === "loading") return;
+
+    if (session?.accessToken) {
+      saveAuthTokens({
+        accessToken: session.accessToken,
+        refreshToken: session.refreshToken,
+      });
+      return;
+    }
+
+    clearAuthTokens();
+  }, [session?.accessToken, session?.refreshToken, sessionStatus]);
+
   const status = useMemo<TAuthStatus>(() => {
     if (sessionStatus === "loading") return "checking";
     if (profile) return "authenticated";
@@ -26,6 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [profile, sessionStatus]);
 
   const logout = useCallback(() => {
+    clearAuthTokens();
     void signOut({ callbackUrl: "/" });
   }, []);
 

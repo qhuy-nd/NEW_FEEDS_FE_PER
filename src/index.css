@@ -17,6 +17,13 @@
 @import './style/components/atoms/toast.scss';
 
 @import './style/components/molecules/card-post.scss';
+@import './style/components/molecules/community-topbar.scss';
+@import './style/components/molecules/community-sidebar.scss';
+@import './style/components/molecules/community-composer.scss';
+@import './style/components/molecules/community-post-card.scss';
+@import './style/components/molecules/community-right-rail.scss';
+
+@import './style/components/features/community-feed.scss';
 
 @tailwind base;
 @tailwind components;

@@ -1,0 +1,17 @@
+const PREFIX_USER_LEARNING_PATH = "/user_learning_path";
+
+export const API_USER_LEARNING_PATH_ROUTERS = {
+  GET: {
+    USER_LEARNING_PATH_GET: `${PREFIX_USER_LEARNING_PATH}/action/get/{slug}`,
+    USER_LEARNING_PATH_GETLIST: `${PREFIX_USER_LEARNING_PATH}/action/getlist`,
+  },
+  POST: {
+    USER_LEARNING_PATH_CREATE_ONE: `${PREFIX_USER_LEARNING_PATH}/action/create`,
+  },
+  PUT: {
+    USER_LEARNING_PATH_UPDATE_ONE: `${PREFIX_USER_LEARNING_PATH}/action/update/{id}`,
+  },
+  DELETE: {
+    USER_LEARNING_PATH_DELETE_ONE: `${PREFIX_USER_LEARNING_PATH}/action/delete/{id}`,
+  },
+};

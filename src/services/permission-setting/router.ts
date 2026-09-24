@@ -1,0 +1,8 @@
+const PREFIX_PERMISSION_SETTING = "/permission_setting";
+
+export const API_PERMISSION_SETTING_ROUTERS = {
+  GET: {
+    PERMISSION_SETTING_GET: `${PREFIX_PERMISSION_SETTING}/action/get/{slug}`,
+    PERMISSION_SETTING_GETLIST: `${PREFIX_PERMISSION_SETTING}/action/getlist`,
+  },
+};

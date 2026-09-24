@@ -1,40 +1,20 @@
 import { BehaviorSubject } from "rxjs";
-import type { AxiosInstance, AxiosRequestConfig } from "axios";
-import type { TApiResult, THttpMethod } from "./type";
+import type { AxiosInstance } from "axios";
+import {
+  type TApiCallerConfig,
+  type TApiRequestConfig,
+  type TApiResult,
+  type TApiToastConfig,
+  type THttpMethod,
+} from "./type";
 import axiosInstance from "./axios-instance";
-
-const PATH_PARAM_REGEX = /\{([^}]+)\}/g;
-
-const isRecord = (value: unknown): value is Record<string, unknown> => {
-  return value !== null && typeof value === "object" && !Array.isArray(value);
-}
-
-const buildEndpoint = <TVariables,>(endpoint: string, variables?: TVariables) => {
-  const pathParamKeys = new Set<string>();
-
-  const url = endpoint.replace(PATH_PARAM_REGEX, (_, key: string) => {
-    pathParamKeys.add(key);
-
-    if (!isRecord(variables) || variables[key] === undefined || variables[key] === null) {
-      throw new Error(`Missing path param: ${key}`);
-    }
-
-    return encodeURIComponent(String(variables[key]));
-  });
-
-  if (!pathParamKeys.size || !isRecord(variables)) {
-    return { url, variables };
-  }
-
-  const remainingVariables = Object.fromEntries(
-    Object.entries(variables).filter(([key]) => !pathParamKeys.has(key))
-  );
-
-  return {
-    url,
-    variables: Object.keys(remainingVariables).length ? remainingVariables as TVariables : undefined
-  };
-}
+import {
+  buildEndpoint,
+  getErrorMessage,
+  getMessageFromValue,
+  isApiRequestCanceled,
+  showApiResultToast,
+} from "./api.utils";
 
 export class RxAxiosCaller<
   TData,
@@ -43,14 +23,17 @@ export class RxAxiosCaller<
 > {
   private subject = new BehaviorSubject<TApiResult<TData>>({ status: "idle" });
   private abortController: AbortController | null = null;
-  private instance: AxiosInstance = axiosInstance;
+  private instance: AxiosInstance;
 
   constructor(
 
     private endpoint: string,
     private method: THttpMethod = "GET",
     private parser?: (raw: TRawResponse) => TData,
-  ) { }
+    private config: TApiCallerConfig = {},
+  ) {
+    this.instance = config.instance ?? axiosInstance;
+  }
 
   get result$() {
     return this.subject.asObservable();
@@ -62,6 +45,31 @@ export class RxAxiosCaller<
 
   protected setResult(result: TApiResult<TData>): void {
     this.subject.next(result);
+  }
+
+  protected setSuccessResult(
+    data: TData,
+    raw?: unknown,
+    toastConfig?: TApiToastConfig,
+  ): void {
+    this.setResult({ status: "success", data });
+    showApiResultToast(
+      "success",
+      getMessageFromValue(raw) ?? "Call api success",
+      toastConfig,
+      this.config.toast,
+    );
+  }
+
+  protected setErrorResult(
+    error: unknown,
+    toastConfig?: TApiToastConfig,
+    fallbackMessage = "Error call api",
+  ): void {
+    const message = getErrorMessage(error, fallbackMessage);
+
+    this.setResult({ status: "error", message });
+    showApiResultToast("fail", message, toastConfig, this.config.toast);
   }
 
   reset(): void {
@@ -77,7 +85,7 @@ export class RxAxiosCaller<
     }
   }
 
-  async execute(variables?: TVariables, config?: AxiosRequestConfig): Promise<TData> {
+  async execute(variables?: TVariables, config?: TApiRequestConfig): Promise<TData> {
     this.abort()
 
     this.abortController = new AbortController();
@@ -86,13 +94,14 @@ export class RxAxiosCaller<
 
     try {
       const request = buildEndpoint(this.endpoint, variables);
+      const { toast: toastConfig, ...axiosConfig } = config ?? {};
 
       const response = await this.instance.request<TRawResponse>({
         url: request.url,
         method: this.method,
         data: this.method !== "GET" ? request.variables : undefined,
         params: this.method === "GET" ? request.variables : undefined,
-        ...config,
+        ...axiosConfig,
       });
 
       this.abortController = null;
@@ -101,13 +110,16 @@ export class RxAxiosCaller<
         ? this.parser(response.data)
         : (response.data as unknown as TData);
 
-      this.setResult({ status: "success", data: parsed });
+      this.setSuccessResult(parsed, response.data, toastConfig);
 
       return parsed;
 
     } catch (error) {
+      if (isApiRequestCanceled(error)) {
+        throw error;
+      }
 
-      this.setResult({ status: "error", message: 'Error call api' });
+      this.setErrorResult(error, config?.toast);
       throw error;
     }
   }
